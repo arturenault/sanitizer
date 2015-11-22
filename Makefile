@@ -9,18 +9,18 @@ LDLIBS		=
 SRC_FILES	= $(shell find . -type f \( -name "*.cc" -or -name "*.h" \))
 INCLUDES	= 
 
-compile:
+compile: sanitizer
 
 build: compile
 
 sanitizer: sanitizer.o
 
-clean: check
-	rm -rf *.o addqueue showqueue rmqueue /usr/local/bin/addqueue /usr/local/bin/showqueue /usr/local/bin/rmqueue $(ROOT_DIR)
-
 format:
 	for file in $(SRC_FILES) ; do \
 		clang-format --style=Google -i $$file ; \
 	done
+
+clean: 
+	rm -f *.o sanitizer
 
 all: clean default
