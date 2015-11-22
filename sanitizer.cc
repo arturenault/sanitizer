@@ -2,18 +2,19 @@
 #include <sstream>
 #include "sanitizer.h"
 
+unsigned char quoteChar;
+
 int main() {
   string line;
   while(getline(cin, line)) {
-    string fileName, dataField;
+    string fileName, dataField, sanitizedFileName, sanitizedDataField;
     stringstream lineReader(line);
 
     lineReader >> fileName;
     lineReader >> dataField;
 
-
-    string sanitizedFileName;
     if(!sanitizeField(fileName, sanitizedFileName)) continue;
+    if(!sanitizeField(dataField, sanitizedDataField)) continue;
 
     cout << sanitizedFileName << " " << dataField << endl;
   }
@@ -30,6 +31,7 @@ bool sanitizeField(const string& name, string& output) {
     }
 
     quoted = true;
+    quoteChar = name.front();
   }
 
   for (auto iter = name.cbegin() + (quoted? 1 : 0) ;
@@ -44,7 +46,11 @@ bool sanitizeField(const string& name, string& output) {
         return false;
       }
     } else {
-      if (current == '\\') {
+      if (current == '\0') {
+        return false;
+      } else if (current == quoteChar) {
+        return false;
+      } else if (current == '\\') {
         if ((outChar = escapeChars(name, iter)) == '\0') {
           return false;
         }
@@ -96,6 +102,8 @@ unsigned char escapeChars(const string& name, string::const_iterator& iter) {
     return '\r';
   } else if (current == 't') {
     return '\t';
+  } else if (current == quoteChar) {
+    return quoteChar;
   } else if (current >= '0' && current < '8') {
     int value = current - '0';
 
