@@ -1,3 +1,10 @@
-filename1 data\nfield1
-filename2    datafield2
-file\tname3	datafield3
+filename1 datafield1
+fil&name2    datafield2
+filéname3	datafield3
+'filename4' datafield4
+"filename5\n" datafield5
+"filename6\r" datafield6
+"filename7\t" datafield7
+"filename8\000" datafield8
+"filename9\041" datafield9
+'filename10" datafield10
