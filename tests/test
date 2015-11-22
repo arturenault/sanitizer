@@ -1,3 +1,3 @@
-filename1 datafield1
-filename2 datafield2
-filename3 datafield3
+filename1 data\nfield1
+filename2    datafield2
+file\tname3	datafield3

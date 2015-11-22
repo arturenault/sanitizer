@@ -9,9 +9,9 @@ int main() {
     string fileName, dataField;
     stringstream lineReader(line);
 
-    getline(lineReader, fileName, ' ');
-    getline(lineReader, dataField);
+    lineReader >> fileName;
+    lineReader >> dataField;
 
-    cout << fileName << " " << dataField << endl;
+    cout << fileName << " "  << dataField << endl;
   }
 }
