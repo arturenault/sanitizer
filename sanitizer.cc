@@ -2,66 +2,113 @@
 #include <sstream>
 #include "sanitizer.h"
 
-unsigned char quoteChar;
+char quote;
 
 int main() {
   string line;
   while(getline(cin, line)) {
     string fileName, dataField, sanitizedFileName, sanitizedDataField;
-    stringstream lineReader(line);
 
-    lineReader >> fileName;
-    lineReader >> dataField;
-
-    if(!sanitizeField(fileName, sanitizedFileName)) continue;
-    if(!sanitizeField(dataField, sanitizedDataField)) continue;
-
-    cout << sanitizedFileName << " " << dataField << endl;
+    if(!sanitizeFields(line, sanitizedFileName, sanitizedDataField)) continue;
+    
+    cout << sanitizedFileName << " " << sanitizedDataField << endl;
   }
 }
 
-bool sanitizeField(const string& name, string& output) {
-  output = "";
+bool sanitizeFields(const string& line, string& outputFileName, string& outputDataField) {
+  stringstream filename, datafield;
 
-  bool quoted = false;
+  quote = '\0';
 
-  if (name.front() == '\'' || name.front() == '\"') {
-    if (name.front() != name.back()) {
-      return false;
-    }
-
-    quoted = true;
-    quoteChar = name.front();
+  if (line.front() == '\'' || line.front() == '\"') {
+    quote = line.front();
   }
 
-  for (auto iter = name.cbegin() + (quoted? 1 : 0) ;
-      iter != name.cend() - (quoted? 1 : 0);
+  string::const_iterator iter;
+
+  for (iter = line.cbegin() + (quote? 1 : 0) ;
+      iter != line.cend();
       ++iter) {
 
     unsigned char outChar = '\0';
     unsigned char current = *iter;
 
-    if (!quoted) {
+    if (!quote) {
+      if(isSpaceOrTab(current)) {
+        break;
+      } else if (!isAlphanumeric(current)) {
+        return false;
+      }
+    } else {
+      if (current == '\0') {
+        return false;
+      } else if (current == quote) {
+        ++iter;
+        break;
+      } else if (current == '\\') {
+        if ((outChar = escapeChars(line, iter)) == '\0') {
+          return false;
+        }
+      } 
+    }
+
+    if (outChar == '\0')
+      outChar = current;
+
+    filename << outChar;
+  }
+
+  if (iter == line.cend())
+    return false;
+
+  while (isSpaceOrTab(*iter)) iter++;
+
+  quote = '\0';
+
+  if (*iter == '\'' || *iter == '\"') 
+    quote = *iter;
+
+  for (iter += (quote? 1 : 0) ;
+      iter != line.cend();
+      ++iter) {
+
+    unsigned char outChar = '\0';
+    unsigned char current = *iter;
+
+    if (!quote) {
       if (!isAlphanumeric(current)) {
         return false;
       }
     } else {
       if (current == '\0') {
         return false;
-      } else if (current == quoteChar) {
-        return false;
+      } else if (current == quote) {
+        ++iter;
+        break;
       } else if (current == '\\') {
-        if ((outChar = escapeChars(name, iter)) == '\0') {
+        if ((outChar = escapeChars(line, iter)) == '\0') {
           return false;
         }
       } 
     }
 
-    if (outChar == '\0') outChar = current;
-    output += outChar;
+    if (outChar == '\0')
+      outChar = current;
+    datafield << outChar;
   }
 
+  if (iter != line.cend())
+      return false;
+
+
+  outputFileName = filename.str();
+  outputDataField = datafield.str();
   return true;
+}
+
+bool isSpaceOrTab(unsigned char letter) {
+  if (letter == ' ' || letter == '\t') return true;
+  else return false;
 }
 
 bool isAlphanumeric(unsigned char letter) {
@@ -102,8 +149,8 @@ unsigned char escapeChars(const string& name, string::const_iterator& iter) {
     return '\r';
   } else if (current == 't') {
     return '\t';
-  } else if (current == quoteChar) {
-    return quoteChar;
+  } else if (current == quote) {
+    return quote;
   } else if (current >= '0' && current < '8') {
     int value = current - '0';
 

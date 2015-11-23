@@ -3,9 +3,11 @@
 
 using namespace std;
 
-bool sanitizeField(const string& name, string& output);
+bool sanitizeFields(const string& name, string& outputFileName, string& outputDataField);
 
 bool isAlphanumeric(unsigned char letter);
+
+bool isSpaceOrTab(unsigned char letter);
 
 unsigned char escapeChars(const string& name, string::const_iterator& iter);
 
