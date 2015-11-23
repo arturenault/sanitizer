@@ -3,12 +3,17 @@
 
 using namespace std;
 
-bool sanitizeFields(const string& name, string& outputFileName, string& outputDataField);
+bool SanitizeFields(const string& name, string& outputFileName,
+                    string& outputDataField);
 
-bool isAlphanumeric(unsigned char letter);
+bool SanitizeField(string::const_iterator& iter,
+                   const string::const_iterator& end, string& output);
 
-bool isSpaceOrTab(unsigned char letter);
+bool IsAlphanumeric(unsigned char letter);
 
-unsigned char escapeChars(const string& name, string::const_iterator& iter);
+bool IsSpaceOrTab(unsigned char letter);
+
+unsigned char EscapeChars(string::const_iterator& iter,
+                          const string::const_iterator& end);
 
 #endif

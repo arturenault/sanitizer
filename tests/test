@@ -1,12 +1,22 @@
 filename1 datafield1
-fil&name2    datafield2
-filéname3	datafield3
-'filename4' datafield4
-"filename5\n" datafield5
-"filename6\r" datafield6
-"filename7\t" datafield7
-"filename8\000" datafield8
-"filename9\041" datafield9
-'filename10" datafield10
-'filename"11' datafield11
-'filename 12' datafield12
+filename2     datafield2
+filename3	datafield3
+fil&name4 datafield4
+filéname5 datafield5
+'filename6' datafield6
+"filename7\n" datafield7
+"filename8\r" datafield8
+"filename9\t" datafield9
+"filename10\000" datafield10
+"filename11\041" datafield11
+'filename12" datafield12
+filename1³ datafield13
+'filename"14' datafield14
+'filename 15' datafield15
+"filen\ame16" datafield16
+"filename\\17" datafield17
+filename18 dat!field18
+filename19 datãfield19
+filename20 'datafield20'
+filename21 'datafield21"
+"filename22" "datafield22"
