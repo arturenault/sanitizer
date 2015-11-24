@@ -1,0 +1,17 @@
+README
+hw3
+Artur Upton Renault
+Security Architecture and Engineering
+
+Executable Name: sanitizer
+
+Makefile targets are as specified in the assignment, with the addition of make
+format, which formats everything according to Google Style Guide.
+
+The program reads lines in the format <filename> <data_field> from stdin and
+outputs the data_fields to the files specified by filename if both fields are
+valid and the file is within either the current directory or "tmp." It fails on
+that line silently otherwise.
+
+NOTE: invalid escape sequences are simply output with the correct value (e.g.
+"\a" becomes "a"). This simplified my quotation parsing.

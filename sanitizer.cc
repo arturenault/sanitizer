@@ -1,17 +1,19 @@
 #include "sanitizer.h"
 
+/* I started using deques because I thought I was going to pop from both sides.
+ * that turned out to be unnecessary and I'm lazy to change it now */
 deque<string> currentPath, tmpPath;
 
 int main() {
-  string line;
-  char *buf = get_current_dir_name();
-  
+
+  string line; // C++ needs a better way to get the current directory
+  char *buf = get_current_dir_name(); 
   if (!buf) 
     cout << "malloc failed" << endl;
-
   string currentPathString(buf);
   free(buf);
 
+  /* create deques from temp and the current path for future comparison */
   PopulateDeque(tmpPath, "/tmp");
   PopulateDeque(currentPath, currentPathString);
 
@@ -19,15 +21,17 @@ int main() {
     string fileName, dataField, sanitizedFileName, sanitizedDataField,
         resolvedFileName;
 
+    /* sanitize both fields */
     if (!SanitizeFields(line, sanitizedFileName, sanitizedDataField)) continue;
 
+    /* check the path */
     if (!ResolvePath(sanitizedFileName + "." + UNI, resolvedFileName)) continue;
 
+    /* safely escape the outputs */
     string escapedFileName = EscapeField(resolvedFileName);
     string escapedDataField = EscapeField(sanitizedDataField);
 
     string command = "echo " + escapedDataField + " >> " + escapedFileName;
-    cout << command << endl;
     system(command.c_str());
   }
 }
@@ -35,12 +39,15 @@ int main() {
 string EscapeField(const string& field) {
   stringstream output;
 
+  /* enclose fields in single quotes so things don't get expanded */
   output << '\'';
   for (string::const_iterator iter = field.cbegin(); iter != field.cend();
        ++iter) {
     char current = *iter;
 
     if (current == '\'') {
+        /* you need to close the string, create a new one with a single quote,
+         * and reopen the original one to insert the single quote */
       output << "\'\"\'\"\'";
     } else {
       output << current;
@@ -75,27 +82,33 @@ bool SanitizeField(string::const_iterator& iter,
   bool matched = false;
 
   if (*iter == '\'' || *iter == '\"') {
+    /* if quoted, remember if single or double and move iterator one forward */
     quote = *(iter++);
   }
 
-  for (iter + (quote ? 1 : 0); iter != end; ++iter) {
+  for (; iter != end; ++iter) {
     unsigned char outChar = '\0';
     unsigned char current = *iter;
 
     if (!quote) {
       if (IsSpaceOrTab(current)) {
+        // end of unquoted field
         break;
       } else if (!IsAlphanumeric(current)) {
+        // invalid char
         return false;
       }
     } else {
       if (current == '\0') {
+        // invalid char
         return false;
       } else if (current == quote) {
+        // end of quoted string
         matched = true;
         ++iter;
         break;
       } else if (current == '\\') {
+        // escape sequence
         if ((outChar = EscapeChars(iter, end)) == '\0') {
           return false;
         }
@@ -113,10 +126,7 @@ bool SanitizeField(string::const_iterator& iter,
 }
 
 bool IsSpaceOrTab(unsigned char letter) {
-  if (letter == ' ' || letter == '\t')
-    return true;
-  else
-    return false;
+  return (letter == ' ' || letter == '\t');
 }
 
 bool IsAlphanumeric(unsigned char letter) {
@@ -156,6 +166,7 @@ unsigned char EscapeChars(string::const_iterator& iter,
   } else if (current == 't') {
     return '\t';
   } else if (current >= '0' && current < '8') {
+    /* handle octal character */
     int value = current - '0';
 
     if (++iter == end - 1) return '\0';
@@ -176,6 +187,7 @@ unsigned char EscapeChars(string::const_iterator& iter,
 
     return (unsigned char)value;
   } else {
+    // for all other escapes, just return the character. people can be paranoid.
     return current;
   }
 }
@@ -183,6 +195,8 @@ unsigned char EscapeChars(string::const_iterator& iter,
 bool ResolvePath(const string& filename, string& output) {
   deque<string> path;
 
+  // Build deque of the file path, check that it's in either /tmp or the current
+  // directory, and return a shortened version.
   PopulateDeque(path, filename);
 
   string file = path.back();

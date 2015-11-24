@@ -23,12 +23,17 @@ test: build
 		cd sandbox 2>/dev/null ;  cat ../$$file | ../sanitizer ; \
 	done
 
+exec: build
+	for arg in $(ARG) ; do \
+		cat $$arg | ./sanitizer ; \
+	done
+
 format:
 	for file in $(SRC_FILES) ; do \
 		clang-format --style=Google -i $$file ; \
 	done
 
 clean: 
-	rm -rf *.o sanitizer sandbox
+	rm -rf *.o sanitizer sandbox *.$(UNI) /tmp/*.$(UNI)
 
 all: clean default
