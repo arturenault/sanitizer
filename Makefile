@@ -7,7 +7,8 @@ CXXFLAGS	= -g -Wall --std=c++11 $(INCLUDES)
 LDFLAGS		= -g
 LDLIBS		= 
 SRC_FILES	= $(shell find . -type f \( -name "*.cc" -or -name "*.h" \))
-INCLUDES	= 
+UNI				= aur2103
+INCLUDES	= -DUNI=\"$(UNI)\" 
 
 compile: sanitizer
 

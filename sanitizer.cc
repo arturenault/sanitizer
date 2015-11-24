@@ -1,20 +1,33 @@
-#include <iostream>
-#include <sstream>
 #include "sanitizer.h"
 
 char quote;
+deque<string> currentPath, etcPath;
 
 int main() {
   string line;
+  char *buf = get_current_dir_name();
+  
+  if (!buf) 
+    cout << "malloc failed" << endl;
+
+  string currentPathString(buf);
+  free(buf);
+
+  PopulateDeque(etcPath, "/etc");
+  PopulateDeque(currentPath, currentPathString);
+
   while (getline(cin, line)) {
-    string fileName, dataField, sanitizedFileName, sanitizedDataField;
+    string fileName, dataField, sanitizedFileName, sanitizedDataField,
+        resolvedFileName;
 
     if (!SanitizeFields(line, sanitizedFileName, sanitizedDataField)) continue;
-    
+
+    if (!ResolvePath(sanitizedFileName + "." + UNI, resolvedFileName)) continue;
+
     string escapedFileName = EscapeField(sanitizedFileName);
     string escapedDataField = EscapeField(sanitizedDataField);
 
-    string command = "echo " + escapedDataField + " >> " + escapedFileName;
+    string command = "echo " + escapedDataField + " >> " + resolvedFileName;
     cout << command << endl;
     system(command.c_str());
   }
@@ -24,10 +37,8 @@ string EscapeField(const string& field) {
   stringstream output;
 
   output << '\'';
-  for (string::const_iterator iter = field.cbegin();
-      iter != field.cend();
-      ++iter) {
-
+  for (string::const_iterator iter = field.cbegin(); iter != field.cend();
+       ++iter) {
     char current = *iter;
 
     if (current == '\'') {
@@ -169,5 +180,44 @@ unsigned char EscapeChars(string::const_iterator& iter,
     return (unsigned char)value;
   } else {
     return '\0';
+  }
+}
+
+bool ResolvePath(const string& filename, string& output) {
+  deque<string> path;
+
+  PopulateDeque(path, filename);
+
+  string file = path.back();
+  path.pop_back();
+  if (path != etcPath && path != currentPath) return false;
+  path.push_back(file);
+
+  stringstream outputStream;
+  for (auto iter = path.begin(); iter != path.end(); ++iter)
+    outputStream << "/" << *iter;
+
+  output = outputStream.str();
+
+  return true;
+}
+
+void PopulateDeque(deque<string>& path, const string& filename) {
+  stringstream pathstream(filename);
+  string file;
+  if (filename.front() != '/') {
+    path = currentPath;
+  } else {
+    getline(pathstream, file, '/');
+  }
+
+  while (getline(pathstream, file, '/')) {
+    if (file == "." || file == "") {
+      // ignore
+    } else if (file == ".." && !path.empty()) {
+      path.pop_back();
+    } else {
+      path.push_back(file);
+    }
   }
 }
