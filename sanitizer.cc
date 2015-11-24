@@ -1,7 +1,7 @@
 #include "sanitizer.h"
 
 char quote;
-deque<string> currentPath, etcPath;
+deque<string> currentPath, tmpPath;
 
 int main() {
   string line;
@@ -13,7 +13,7 @@ int main() {
   string currentPathString(buf);
   free(buf);
 
-  PopulateDeque(etcPath, "/etc");
+  PopulateDeque(tmpPath, "/tmp");
   PopulateDeque(currentPath, currentPathString);
 
   while (getline(cin, line)) {
@@ -24,10 +24,10 @@ int main() {
 
     if (!ResolvePath(sanitizedFileName + "." + UNI, resolvedFileName)) continue;
 
-    string escapedFileName = EscapeField(sanitizedFileName);
+    string escapedFileName = EscapeField(resolvedFileName);
     string escapedDataField = EscapeField(sanitizedDataField);
 
-    string command = "echo " + escapedDataField + " >> " + resolvedFileName;
+    string command = "echo " + escapedDataField + " >> " + escapedFileName;
     cout << command << endl;
     system(command.c_str());
   }
@@ -190,7 +190,7 @@ bool ResolvePath(const string& filename, string& output) {
 
   string file = path.back();
   path.pop_back();
-  if (path != etcPath && path != currentPath) return false;
+  if (path != tmpPath && path != currentPath) return false;
   path.push_back(file);
 
   stringstream outputStream;
