@@ -15,12 +15,20 @@ build: compile
 
 sanitizer: sanitizer.o
 
+test: build
+	rm -rf sandbox
+	mkdir sandbox
+	cd sandbox
+	for file in tests/* ; do \
+		cd sandbox && cat ../$$file | ../sanitizer ; \
+	done
+
 format:
 	for file in $(SRC_FILES) ; do \
 		clang-format --style=Google -i $$file ; \
 	done
 
 clean: 
-	rm -f *.o sanitizer
+	rm -rf *.o sanitizer sandbox
 
 all: clean default

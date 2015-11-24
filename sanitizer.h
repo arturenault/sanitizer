@@ -16,4 +16,6 @@ bool IsSpaceOrTab(unsigned char letter);
 unsigned char EscapeChars(string::const_iterator& iter,
                           const string::const_iterator& end);
 
+string EscapeField(const string& field);
+
 #endif

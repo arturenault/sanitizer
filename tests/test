@@ -20,3 +20,11 @@ filename19 datãfield19
 filename20 'datafield20'
 filename21 'datafield21"
 "filename22" "datafield22"
+"filename23'; ls;" datafield23
+"filename24'; | cat;" datafield24
+filename25 ""
+filename26 "datafield26" fail
+filename27 "hello;' ls"
+filename28 "`pwd`"
+filename29 "$PATH"
+filename30 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzƒŠŒšœŸª²³¹ºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüışÿ

@@ -10,9 +10,35 @@ int main() {
     string fileName, dataField, sanitizedFileName, sanitizedDataField;
 
     if (!SanitizeFields(line, sanitizedFileName, sanitizedDataField)) continue;
+    
+    string escapedFileName = EscapeField(sanitizedFileName);
+    string escapedDataField = EscapeField(sanitizedDataField);
 
-    cout << sanitizedFileName << " " << sanitizedDataField << endl;
+    string command = "echo " + escapedDataField + " >> " + escapedFileName;
+    cout << command << endl;
+    system(command.c_str());
   }
+}
+
+string EscapeField(const string& field) {
+  stringstream output;
+
+  output << '\'';
+  for (string::const_iterator iter = field.cbegin();
+      iter != field.cend();
+      ++iter) {
+
+    char current = *iter;
+
+    if (current == '\'') {
+      output << "\'\"\'\"\'";
+    } else {
+      output << current;
+    }
+  }
+
+  output << '\'';
+  return output.str();
 }
 
 bool SanitizeFields(const string& line, string& outputFileName,
