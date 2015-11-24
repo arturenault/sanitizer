@@ -28,9 +28,10 @@ filename27 "hello;' ls"
 filename28 "`pwd`"
 filename29 "$PATH"
 filename30 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzƒŠŒšœŸª²³¹ºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüışÿ
-"/etc/filename31" datafield31
+"/tmp/filename31" datafield31
 "."	datafield32
-"/etc/a/filename33" datafield33
+"/tmp/a/filename33" datafield33
 "a/b/../../" datafield34
 "a/b/../.." datafield35
  datafield36
+filename37 
