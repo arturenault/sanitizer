@@ -5,11 +5,9 @@
 deque<string> currentPath, tmpPath;
 
 int main() {
-
-  string line; // C++ needs a better way to get the current directory
-  char *buf = get_current_dir_name(); 
-  if (!buf) 
-    cout << "malloc failed" << endl;
+  string line;  // C++ needs a better way to get the current directory
+  char* buf = get_current_dir_name();
+  if (!buf) cout << "malloc failed" << endl;
   string currentPathString(buf);
   free(buf);
 
@@ -46,8 +44,8 @@ string EscapeField(const string& field) {
     char current = *iter;
 
     if (current == '\'') {
-        /* you need to close the string, create a new one with a single quote,
-         * and reopen the original one to insert the single quote */
+      /* you need to close the string, create a new one with a single quote,
+       * and reopen the original one to insert the single quote */
       output << "\'\"\'\"\'";
     } else {
       output << current;
