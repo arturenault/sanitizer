@@ -19,9 +19,8 @@ sanitizer: sanitizer.o
 test: build
 	rm -rf sandbox
 	mkdir sandbox
-	cd sandbox
 	for file in tests/* ; do \
-		cd sandbox && cat ../$$file | ../sanitizer ; \
+		cd sandbox 2>/dev/null ;  cat ../$$file | ../sanitizer ; \
 	done
 
 format:

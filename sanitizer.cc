@@ -1,6 +1,5 @@
 #include "sanitizer.h"
 
-char quote;
 deque<string> currentPath, tmpPath;
 
 int main() {
@@ -72,7 +71,7 @@ bool SanitizeFields(const string& line, string& outputFileName,
 bool SanitizeField(string::const_iterator& iter,
                    const string::const_iterator& end, string& output) {
   stringstream outBuffer;
-  quote = '\0';
+  char quote = '\0';
   bool matched = false;
 
   if (*iter == '\'' || *iter == '\"') {
@@ -156,8 +155,6 @@ unsigned char EscapeChars(string::const_iterator& iter,
     return '\r';
   } else if (current == 't') {
     return '\t';
-  } else if (current == quote) {
-    return quote;
   } else if (current >= '0' && current < '8') {
     int value = current - '0';
 
@@ -179,7 +176,7 @@ unsigned char EscapeChars(string::const_iterator& iter,
 
     return (unsigned char)value;
   } else {
-    return '\0';
+    return current;
   }
 }
 

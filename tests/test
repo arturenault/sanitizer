@@ -35,3 +35,8 @@ filename30 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzƒŠŒŽšœž
 "a/b/../.." datafield35
  datafield36
 filename37 
+"\"filename38\"" datafield38
+"\'filename39\'" datafield39
+""filename40"" datafield40
+"'filename41'" datafield41
+  datafield42
